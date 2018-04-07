@@ -56,7 +56,7 @@ if __name__ == "__main__":
     cv_df.drop(columns=['ALLELEID', 'RS', 'DBVARID'], inplace=True)
     # drop columns that would reveal class
     cv_df.drop(columns=['CLNSIG', 'CLNSIGCONF', 'CLNREVSTAT'], inplace=True)
-    # drop this redundant column
-    cv_df.drop(columns=['CLNVCSO'], inplace=True)
+    # drop these redundant columns
+    cv_df.drop(columns=['ID', 'CLNVCSO'], inplace=True)
 
     cv_df.to_csv('clinvar_conflicting.csv', index=False)
