@@ -4,7 +4,7 @@ Scripts and data used to prepare a [Kaggle dataset](https://www.kaggle.com/kevin
 
 The objective is to predict whether a ClinVar variant will have **conflicting classifications**.
 
-*of note: Conflicting classifications are when two of any of the following three categories are present for one variant, two submissions of one category is not considered conflicting*
+*Conflicting classifications are when two of any of the following three categories are present for one variant, two submissions of one category is not considered conflicting*
 This is already handled in the `.csv` file.
 1. Likely Benign or Benign
 2. VUS
