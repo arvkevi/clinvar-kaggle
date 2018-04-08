@@ -1,5 +1,9 @@
 Scripts and data used to prepare a [Kaggle dataset](https://www.kaggle.com/kevinarvai/clinvar-conflicting).
 
+`python process_clinvar.py` will generate the file `clinvar_conflicting.csv`. A version of the file is included in the repo for convenience.
+
+Check out the [notebook](https://github.com/arvkevi/clinvar-kaggle/blob/master/clinvar-conflicting-eda.ipynb) to see some exploratory data analysis.
+
 ## Problem Statement
 
 The objective is to predict whether a ClinVar variant will have **conflicting classifications**.
