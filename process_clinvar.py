@@ -1,4 +1,4 @@
-import gzip, re
+import gzip, re, argparse
 import pandas as pd
 
 
@@ -8,6 +8,11 @@ def list_to_dict(l):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--vep', action='store_true',
+                        help='export a vep annotated csv')
+    args = parser.parse_args()
+    vep = args.vep
 
     # store column info
     cv_columns = {}
@@ -56,7 +61,26 @@ if __name__ == "__main__":
     cv_df.drop(columns=['ALLELEID', 'RS', 'DBVARID'], inplace=True)
     # drop columns that would reveal class
     cv_df.drop(columns=['CLNSIG', 'CLNSIGCONF', 'CLNREVSTAT'], inplace=True)
-    # drop these redundant columns
-    cv_df.drop(columns=['ID', 'CLNVCSO'], inplace=True)
+    # drop this redundant columns
+    cv_df.drop(columns=['CLNVCSO'], inplace=True)
 
-    cv_df.to_csv('clinvar_conflicting.csv', index=False)
+    if vep:
+        # process VEP annotations
+        with open('clinvar.annotated.csq.vcf', 'r') as f:
+            for line in f:
+                if line.startswith('##INFO=<ID=CSQ'):
+                    m = re.search(r'Format: (.*)\">', line)
+                    cols = m.group(1).split('|')
+                    break
+
+        csq_df = pd.read_csv('clinvar.annotated.csq.vcf', sep='\t',
+                             comment='#', header=None, names=['ID', 'CSQ'])
+        csq_df = csq_df.reindex(columns=['ID', 'CSQ'] + cols)
+        csq_df[cols] = csq_df['CSQ'].str.split('|').apply(pd.Series)
+        df = cv_df.merge(csq_df.drop(columns=['CSQ']), on='ID')
+        df.drop(columns=['ID']).to_csv('clinvar_conflicting.annotated.csv',
+                                       index=False)
+
+    else:
+        cv_df.drop(columns=['ID']).to_csv('clinvar_conflicting.csv',
+                                          index=False)
