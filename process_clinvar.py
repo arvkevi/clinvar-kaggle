@@ -100,6 +100,17 @@ if __name__ == "__main__":
         csq_df[cols] = csq_df['CSQ'].str.split('|').apply(pd.Series)
         csq_df['ID'] = csq_df['ID'].astype(int)
         df = cv_df.merge(csq_df.drop(columns=['CSQ']), on='ID')
+
+        # drop some vep columns that are all null
+        # df = df.loc[:, ~df.isnull().all()] # this didn't work, so be explicit
+        df = df.drop(columns=['HGVSc', 'HGVSp', 'Existing_variation',
+                              'FLAGS', 'HGNC_ID', 'TSL',
+                              'APPRIS', 'REFSEQ_MATCH', 'MPC'])
+        # these fields are represented by GENEINFO in original .vcf
+        df = df.drop(columns=['Gene', 'SYMBOL', 'SYMBOL_SOURCE'])
+        # finally drop extra REF info from vep
+        df = df.drop(columns=['GIVEN_REF', 'USED_REF'])
+
         df.drop(columns=['ID']).to_csv('clinvar_conflicting.csv',
                                        index=False)
 
