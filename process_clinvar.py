@@ -1,4 +1,6 @@
 import gzip, re, argparse
+import shutil
+from subprocess import run
 import pandas as pd
 
 
@@ -65,20 +67,40 @@ if __name__ == "__main__":
     cv_df.drop(columns=['CLNVCSO'], inplace=True)
 
     if vep:
-        # process VEP annotations
-        with open('clinvar.annotated.csq.vcf', 'r') as f:
+        print('processing vep annotations')
+        # column names
+        with gzip.open('vep/clinvar.annotated.vcf.gz', 'rt') as f:
             for line in f:
                 if line.startswith('##INFO=<ID=CSQ'):
                     m = re.search(r'Format: (.*)\">', line)
                     cols = m.group(1).split('|')
                     break
+        # gunzip the vcf
+        with gzip.open('vep/clinvar.annotated.vcf.gz', 'rb') as f_in:
+            with open('vep/clinvar.annotated.vcf', 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
 
-        csq_df = pd.read_csv('clinvar.annotated.csq.vcf', sep='\t',
-                             comment='#', header=None, names=['ID', 'CSQ'])
+        try:
+            # make sure vawk is in your $PATH
+            f = open("vep/clinvar.annotated.csq.vcf", "w")
+            run(['vawk', '--header', '{ print $3, I$CSQ }',
+                'vep/clinvar.annotated.vcf'], stdout=f)
+        except FileNotFoundError:
+            print('install vawk to use generate vep annotated .csv, see docs')
+
+        # gzip the vcf
+        with open('vep/clinvar.annotated.vcf', 'rb') as f_in:
+            with gzip.open('vep/clinvar.annotated.vcf.gz', 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
+        csq_df = pd.read_csv('vep/clinvar.annotated.csq.vcf', sep='\t',
+                             comment='#', header=None, names=['ID', 'CSQ'],
+                             dtype={0: object})
         csq_df = csq_df.reindex(columns=['ID', 'CSQ'] + cols)
         csq_df[cols] = csq_df['CSQ'].str.split('|').apply(pd.Series)
+        csq_df['ID'] = csq_df['ID'].astype(int)
         df = cv_df.merge(csq_df.drop(columns=['CSQ']), on='ID')
-        df.drop(columns=['ID']).to_csv('clinvar_conflicting.annotated.csv',
+        df.drop(columns=['ID']).to_csv('clinvar_conflicting.csv',
                                        index=False)
 
     else:
