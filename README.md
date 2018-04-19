@@ -1,6 +1,12 @@
 Scripts and data used to prepare a [Kaggle dataset](https://www.kaggle.com/kevinarvai/clinvar-conflicting).
 
-`python process_clinvar.py` will generate the file `clinvar_conflicting.csv`. A version of the file is included in the repo for convenience.
+**Generate dataset using ClinVar .vcf:**  
+`python process_clinvar.py` will generate the file `clinvar_conflicting.csv`.
+
+**Generate dataset using ClinVar .vcf w/ VEP annotations:**  
+`python process_clinvar.py --vep` will generate a version of the file `clinvar_conflicting.csv` with [vep annotations](https://useast.ensembl.org/Tools/VEP). 
+**Note:**  
+[vawk](https://github.com/cc2qe/vawk) is required to run the `vep` version.
 
 Check out the [notebook](https://github.com/arvkevi/clinvar-kaggle/blob/master/clinvar-conflicting-eda.ipynb) to see some exploratory data analysis.
 
