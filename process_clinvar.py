@@ -106,8 +106,8 @@ if __name__ == "__main__":
         df = df.drop(columns=['HGVSc', 'HGVSp', 'Existing_variation',
                               'FLAGS', 'HGNC_ID', 'TSL',
                               'APPRIS', 'REFSEQ_MATCH', 'MPC'])
-        # these fields are represented by GENEINFO in original .vcf
-        df = df.drop(columns=['Gene', 'SYMBOL', 'SYMBOL_SOURCE'])
+        # Use the SYMBOL field instead of parsing GENEINFO
+        df = df.drop(columns=['Gene', 'GENEINFO', 'SYMBOL_SOURCE'])
         # finally drop extra REF info from vep
         df = df.drop(columns=['GIVEN_REF', 'USED_REF'])
 
