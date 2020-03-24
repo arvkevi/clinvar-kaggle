@@ -1,12 +1,7 @@
 Scripts and data used to prepare a [Kaggle dataset](https://www.kaggle.com/kevinarvai/clinvar-conflicting).
 
-**Generate dataset using ClinVar .vcf:**  
-`python process_clinvar.py` will generate the file `clinvar_conflicting.csv`.
-
 **Generate dataset using ClinVar .vcf w/ VEP annotations:**  
-`python process_clinvar.py --vep` will generate a version of the file `clinvar_conflicting.csv` with [vep annotations](https://useast.ensembl.org/Tools/VEP). 
-**Note:**  
-[vawk](https://github.com/cc2qe/vawk) is required to run the `vep` version.
+`python process_clinvar.py` will generate a version of the file `clinvar_conflicting.csv` with [vep annotations](https://useast.ensembl.org/Tools/VEP).
 
 Check out the [notebook](https://github.com/arvkevi/clinvar-kaggle/blob/master/clinvar-conflicting-eda.ipynb) to see some exploratory data analysis.
 
@@ -39,9 +34,5 @@ Ensembl's [Variant Effect Predictor (VEP)](http://grch37.ensembl.org/Homo_sapien
 Download and rename the annotated `.vcf` as `clinvar.annotated.vcf`
 
 #### Step 2:
-To make parsing the annotated `.vcf` easier, [vawk](https://github.com/cc2qe/vawk) was used to export the `CSQ` field using the following command:
-```vawk --header '{ print $3, I$CSQ }' clinvar.annotated.vcf >clinar.annotated.csq.vcf```
-
-#### Step 3:
 Create the new dataset with vep annotations.
-```python process_clinvar.py --vep```
+```python process_clinvar.py```
